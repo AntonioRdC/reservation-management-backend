@@ -4,11 +4,13 @@ import {
   NestModule,
   RequestMethod,
 } from '@nestjs/common';
-import { UsersModule } from './users/users.module';
+
 import { ValidateDtoUserMiddleware } from './users/middleware/validate-dto-user.middleware';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [UsersModule],
+  imports: [UsersModule, AuthModule],
   controllers: [],
   providers: [],
 })
