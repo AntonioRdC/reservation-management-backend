@@ -6,19 +6,30 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { LocalStrategy } from './local.strategy';
 import { UsersModule } from '../users/users.module';
-import { jwtConstants } from './constants';
+import { Constants } from './constants';
 import { JwtStrategy } from './jwt.strategy';
+import { GoogleStrategy } from './google.strategy';
+import { SessionSerializer } from './serializer.service';
 
 @Module({
   imports: [
     UsersModule,
     PassportModule,
     JwtModule.register({
-      secret: jwtConstants.secret,
+      secret: Constants.secretJwt,
       signOptions: { expiresIn: '1d' },
     }),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [
+    {
+      provide: 'AUTH_SERVICE',
+      useClass: AuthService,
+    },
+    LocalStrategy,
+    JwtStrategy,
+    GoogleStrategy,
+    SessionSerializer,
+  ],
   controllers: [AuthController],
 })
 export class AuthModule {}

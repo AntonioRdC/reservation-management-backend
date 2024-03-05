@@ -9,7 +9,6 @@ import {
   HttpException,
   HttpStatus,
   UseGuards,
-  Request,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -58,8 +57,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Get()
   @ApiResponse({ status: 200, description: 'Ok' })
-  async findAll(@Request() req: Request & { user: any }): Promise<User[]> {
-    console.log(req.user);
+  async findAll(): Promise<User[]> {
     const findAllUser = await this.usersService.findAll();
     return findAllUser;
   }

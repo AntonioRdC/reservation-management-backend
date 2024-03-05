@@ -8,9 +8,14 @@ import {
 import { ValidateDtoUserMiddleware } from './users/middleware/validate-dto-user.middleware';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
-  imports: [UsersModule, AuthModule],
+  imports: [
+    UsersModule,
+    AuthModule,
+    PassportModule.register({ session: true }),
+  ],
   controllers: [],
   providers: [],
 })
