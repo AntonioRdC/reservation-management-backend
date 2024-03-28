@@ -8,37 +8,23 @@ import {
   Delete,
   HttpException,
   HttpStatus,
-  UseGuards,
+  Query,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiParam,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { UsersService } from 'src/users/users.service';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { UpdateUserDto } from 'src/users/dto/update-user.dto';
 
 @Controller('users')
-@ApiTags('users')
-@ApiBearerAuth()
-@ApiResponse({ status: 500, description: 'Internal Server Error' })
-@ApiResponse({ status: 401, description: 'Unauthorized' })
-@ApiResponse({ status: 400, description: 'Bad Request' })
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  @ApiBody({ type: CreateUserDto })
-  @ApiResponse({ status: 201, description: 'Created' })
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
     try {
       const createdUser = await this.usersService.create(createUserDto);
+
       return createdUser;
     } catch (error) {
       if (error.code === 'P2002') {
@@ -54,18 +40,13 @@ export class UsersController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get()
-  @ApiResponse({ status: 200, description: 'Ok' })
-  async findAll(): Promise<User[]> {
-    const findAllUser = await this.usersService.findAll();
+  async findAll(@Query() updateUserDto: UpdateUserDto): Promise<User[]> {
+    const findAllUser = await this.usersService.findAll(updateUserDto);
     return findAllUser;
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
-  @ApiResponse({ status: 200, description: 'Ok' })
-  @ApiParam({ name: 'id', type: String, description: 'User ID' })
   async findById(@Param('id') id: string): Promise<User> {
     try {
       const findById = await this.usersService.findById(id);
@@ -84,11 +65,7 @@ export class UsersController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  @ApiResponse({ status: 200, description: 'Ok' })
-  @ApiParam({ name: 'id', type: String, description: 'User ID' })
-  @ApiBody({ type: UpdateUserDto })
   async update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -116,10 +93,7 @@ export class UsersController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  @ApiResponse({ status: 200, description: 'Ok' })
-  @ApiParam({ name: 'id', type: String, description: 'User ID' })
   async remove(@Param('id') id: string): Promise<User> {
     try {
       const removeUser = await this.usersService.remove(id);

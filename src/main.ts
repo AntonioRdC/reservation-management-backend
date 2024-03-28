@@ -1,11 +1,9 @@
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import * as session from 'express-session';
-import * as passport from 'passport';
 import * as dotenv from 'dotenv';
 
-import { AppModule } from './app.module';
+import { AppModule } from 'src/app.module';
 
 async function bootstrap() {
   dotenv.config();
@@ -13,18 +11,6 @@ async function bootstrap() {
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix('api');
-  app.use(
-    session({
-      secret: '018dffd3-cd8f-745c-8572-76d4461cb0eb',
-      resave: false,
-      saveUninitialized: false,
-      cookie: {
-        maxAge: 60000,
-      },
-    }),
-  );
-  app.use(passport.initialize());
-  app.use(passport.session());
 
   const config = new DocumentBuilder()
     .setTitle('Reservation Manager')

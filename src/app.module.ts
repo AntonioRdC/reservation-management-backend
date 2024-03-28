@@ -5,17 +5,12 @@ import {
   RequestMethod,
 } from '@nestjs/common';
 
-import { ValidateDtoUserMiddleware } from './users/middleware/validate-dto-user.middleware';
-import { UsersModule } from './users/users.module';
-import { AuthModule } from './auth/auth.module';
-import { PassportModule } from '@nestjs/passport';
+import { ValidateDtoUserMiddleware } from 'src/users/middleware/validate-dto-user.middleware';
+import { UsersModule } from 'src/users/users.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [
-    UsersModule,
-    AuthModule,
-    PassportModule.register({ session: true }),
-  ],
+  imports: [UsersModule, AuthModule],
   controllers: [],
   providers: [],
 })

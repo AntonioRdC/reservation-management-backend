@@ -1,54 +1,75 @@
 import {
+  Body,
   Controller,
-  Get,
-  Inject,
+  HttpException,
+  HttpStatus,
   Post,
-  Request,
-  UseGuards,
 } from '@nestjs/common';
+import { User, VerificationToken } from '@prisma/client';
 
-import { LocalAuthGuard } from './local-auth.guard';
-import { GoogleAuthGuard } from './google-auth.guard';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthDto } from './dto/auth.dto';
-import { AuthService } from './auth.service';
+import { AuthService } from 'src/auth/auth.service';
+import { ValidateUserDto } from 'src/auth/dto/validateUser.dto';
+import { VerifyTokenDto } from './dto/verifyToken.dto';
 
-@ApiTags('auth')
 @Controller('auth')
-@ApiResponse({ status: 401, description: 'Unauthorized' })
-@ApiResponse({ status: 400, description: 'Bad Request' })
-@ApiResponse({ status: 500, description: 'Internal Server Error' })
 export class AuthController {
-  constructor(
-    @Inject('AUTH_SERVICE') private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
-  @Post('login')
-  @UseGuards(LocalAuthGuard)
-  @ApiResponse({ status: 201, description: 'Created' })
-  @ApiBody({ type: AuthDto })
-  async LogIn(@Request() req: Request & { user: any }) {
-    return this.authService.login(req.user);
+  @Post('validateUser')
+  async validateUser(
+    @Body() validateUserDto: ValidateUserDto,
+  ): Promise<User | Error> {
+    try {
+      const validateUser = await this.authService.validateUser(validateUserDto);
+
+      if (validateUser === null) {
+        throw new HttpException(
+          'This user does not exist',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      return validateUser;
+    } catch (error) {
+      if (error.code === 'P2025') {
+        throw new HttpException(
+          'This user does not exist',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      if (error.status) {
+        throw new HttpException(error.message, error.status);
+      }
+      throw new HttpException(
+        'Internal Server Error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
-  @Get('google/login')
-  @UseGuards(GoogleAuthGuard)
-  async GoogleLogIn(@Request() req: Request & { user: any }) {
-    return this.authService.login(req.user);
-  }
+  @Post('generateVerificationToken')
+  async generateVerificationToken(
+    @Body() verifyTokenDto: VerifyTokenDto,
+  ): Promise<VerificationToken | Error> {
+    try {
+      console.log(verifyTokenDto);
+      const verifiedToken = await this.authService.verifyToken(verifyTokenDto);
 
-  @Get('google/redirect')
-  @UseGuards(GoogleAuthGuard)
-  async GoogleRedirect() {
-    return { msg: 'OK' };
-  }
-
-  @Get('status')
-  user(@Request() req: Request & { user: any }) {
-    if (req.user) {
-      return { msg: 'Authenticated', user: req.user };
-    } else {
-      return { msg: 'Not Authenticated' };
+      return verifiedToken;
+    } catch (error) {
+      if (error.code === 'P2025') {
+        throw new HttpException(
+          'This token does not exist',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      if (error.status) {
+        throw new HttpException(error.message, error.status);
+      }
+      throw new HttpException(
+        'Internal Server Error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

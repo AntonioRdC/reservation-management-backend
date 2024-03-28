@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { hash, genSalt } from 'bcrypt';
 import { User } from '@prisma/client';
 
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { PrismaService } from '../prisma/prisma.service';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { UpdateUserDto } from 'src/users/dto/update-user.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class UsersService {
@@ -20,8 +20,8 @@ export class UsersService {
     });
   }
 
-  async findAll(): Promise<User[]> {
-    return await this.prismaService.user.findMany();
+  async findAll(updateUserDto: UpdateUserDto): Promise<User[]> {
+    return await this.prismaService.user.findMany({ where: updateUserDto });
   }
 
   async findById(id: string): Promise<User> {
