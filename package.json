@@ -2,9 +2,17 @@
   "name": "backend",
   "version": "0.0.1",
   "description": "",
-  "author": "",
+  "author": {
+    "email": "antonioribeiroamg@gmail.com",
+    "name": "Antônio Ribeiro de Carvalho"
+  },
   "private": true,
-  "license": "UNLICENSED",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://www.opensource.org/licenses/mit-license.php"
+    }
+  ],
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
