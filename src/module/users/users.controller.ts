@@ -57,7 +57,7 @@ export class UsersController {
       return user;
     } catch (error) {
       if (error.code === 'P2025') {
-        throw new NotFoundException('User with id ${id} not found');
+        throw new NotFoundException(`User with id '${id}' not found`);
       }
 
       throw new InternalServerErrorException('Internal Error Server');
@@ -73,7 +73,7 @@ export class UsersController {
       return user;
     } catch (error) {
       if (error.code === 'P2025') {
-        throw new NotFoundException('User with id ${id} not found');
+        throw new NotFoundException(`User with id '${id}' not found`);
       }
 
       throw new InternalServerErrorException('Internal Error Server');
@@ -89,7 +89,7 @@ export class UsersController {
       return;
     } catch (error) {
       if (error.code === 'P2025') {
-        throw new NotFoundException('User with id ${id} not found');
+        throw new NotFoundException(`User with id '${id}' not found`);
       }
 
       throw new InternalServerErrorException('Internal Error Server');
