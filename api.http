@@ -1,6 +1,26 @@
-GET http://localhost:3000
+### Criar um novo usuário ###
+POST http://localhost:3000/users
 Content-Type: application/json
 
-{}
+{
+  "name": "Antonio Ribeiro",
+  "email": "antonio@example.com",
+  "password": "secretpassword"
+}
 
-###
+### Listar todos os usuários ###
+GET http://localhost:3000/users
+
+### Buscar um usuário por ID ###
+GET http://localhost:3000/users/cluneyvke0000kdqsqe0czfpl
+
+### Atualizar um usuário por ID ###
+PATCH http://localhost:3000/users/cluneyvke0000kdqsqe0czfpl
+Content-Type: application/json
+
+{
+  "name": "Anton"
+}
+
+### Deletar um usuário por ID ###
+DELETE http://localhost:3000/users/cluneyvke0000kdqsqe0czfpl
