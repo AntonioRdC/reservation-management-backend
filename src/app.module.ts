@@ -3,11 +3,10 @@ import { FastifyAdapter } from '@nestjs/platform-fastify';
 
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { UsersModule } from 'src/module/users/users.module';
+import { AuthModule } from './module/auth/auth.module';
 
 @Module({
-  imports: [PrismaModule, UsersModule],
-  controllers: [],
-  providers: [],
+  imports: [PrismaModule, UsersModule, AuthModule],
 })
 export class AppModule {
   async configureFastify(fastify: FastifyAdapter) {

@@ -3,8 +3,8 @@ POST http://localhost:3000/users
 Content-Type: application/json
 
 {
-  "name": "Antonio Ribeiro",
-  "email": "antonio@example.com",
+  "name": "Rodrigo Ribeiro",
+  "email": "Rodrigo@example.com",
   "password": "secretpassword"
 }
 
@@ -23,4 +23,4 @@ Content-Type: application/json
 }
 
 ### Deletar um usuário por ID ###
-DELETE http://localhost:3000/users/cluneyvke0000kdqsqe0czfpl
+DELETE http://localhost:3000/users/clunezhui0001kdqseyttsr48
