@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
 import { hash, genSalt } from 'bcrypt';
 
 import { PrismaService } from 'src/prisma/prisma.service';
+import { User } from 'src/module/users/entity/users.entity';
 import { CreateUserDto } from 'src/module/users/dto/create-user.dto';
 import { UpdateUserDto } from 'src/module/users/dto/update-user.dto';
 
@@ -22,7 +22,7 @@ export class UsersService {
   }
 
   async findAll(): Promise<User[]> {
-    const allUsers = await this.prismaService.user.findMany();
+    const allUsers = await this.prismaService.user.findMany({});
 
     return allUsers;
   }
@@ -30,6 +30,14 @@ export class UsersService {
   async findOne(id: string): Promise<User | null> {
     const user = await this.prismaService.user.findUniqueOrThrow({
       where: { id },
+    });
+
+    return user;
+  }
+
+  async findOneByEmail(email: string): Promise<User | null> {
+    const user = await this.prismaService.user.findUniqueOrThrow({
+      where: { email },
     });
 
     return user;
