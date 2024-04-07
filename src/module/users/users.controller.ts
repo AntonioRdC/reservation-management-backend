@@ -52,7 +52,7 @@ export class UsersController {
   @HttpCode(200)
   async findOne(@Param('id') id: string) {
     try {
-      const user = await this.usersService.findOne(id);
+      const user = await this.usersService.findOneWithThrow(id);
 
       return user;
     } catch (error) {

@@ -21,13 +21,21 @@ export class UsersService {
     return createdUser;
   }
 
+  async createGoogle(payload: User): Promise<User> {
+    const createdUser = await this.prismaService.user.create({
+      data: payload,
+    });
+
+    return createdUser;
+  }
+
   async findAll(): Promise<User[]> {
     const allUsers = await this.prismaService.user.findMany({});
 
     return allUsers;
   }
 
-  async findOne(id: string): Promise<User | null> {
+  async findOneWithThrow(id: string): Promise<User | null> {
     const user = await this.prismaService.user.findUniqueOrThrow({
       where: { id },
     });
@@ -35,8 +43,16 @@ export class UsersService {
     return user;
   }
 
+  async findOne(id: string): Promise<User | null> {
+    const user = await this.prismaService.user.findUnique({
+      where: { id },
+    });
+
+    return user;
+  }
+
   async findOneByEmail(email: string): Promise<User | null> {
-    const user = await this.prismaService.user.findUniqueOrThrow({
+    const user = await this.prismaService.user.findUnique({
       where: { email },
     });
 

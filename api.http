@@ -3,8 +3,8 @@ POST http://localhost:3000/users
 Content-Type: application/json
 
 {
-  "name": "Rodrigo Ribeiro",
-  "email": "Rodrigo@example.com",
+  "name": "Antonio Ribeiro",
+  "email": "Antonio@example.com",
   "password": "secretpassword"
 }
 
@@ -19,7 +19,7 @@ PATCH http://localhost:3000/users/cluneyvke0000kdqsqe0czfpl
 Content-Type: application/json
 
 {
-  "name": "Anton"
+  "name": "Antonio"
 }
 
 ### Deletar um usuário por ID ###
@@ -30,6 +30,15 @@ POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {
-  "email": "Rodrigo@example.com",
+  "email": "Antonio@example.com",
   "password": "secretpassword"
 }
+
+### Return User With Token ###
+GET http://localhost:3000/auth/profile
+
+### Fazer Login Google ###
+GET http://localhost:3000/auth/google/login
+
+### Fazer Logout ###
+GET http://localhost:3000/auth/logout
