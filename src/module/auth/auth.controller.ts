@@ -6,8 +6,8 @@ import {
   Get,
   Req,
   Query,
-  NotFoundException,
   InternalServerErrorException,
+  BadRequestException,
 } from '@nestjs/common';
 
 import { AuthService } from 'src/module/auth/auth.service';
@@ -52,11 +52,16 @@ export class AuthController {
   @Get('verification-token')
   async verificationTokenUser(@Query() qs) {
     try {
-      return await this.authService.validateEmailUser(qs);
+      const updatedUser = await this.authService.validateEmailUser(qs);
+
+      if (!updatedUser) {
+        throw new BadRequestException(`Token not valid`);
+      }
+
+      return updatedUser.id;
     } catch (error) {
-      console.log(error);
       if (error.code === 'P2025') {
-        throw new NotFoundException(`User id not found`);
+        throw new BadRequestException(`Token not valid`);
       }
 
       throw new InternalServerErrorException('Internal Error Server');

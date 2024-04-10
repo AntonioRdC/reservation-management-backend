@@ -26,15 +26,15 @@ Content-Type: application/json
 }
 
 ### Deletar um usuário por ID ###
-DELETE http://localhost:3000/users/14865cba-fdd5-4c43-815d-b18669b58553
+DELETE http://localhost:3000/users/2ebecf31-6299-4e78-a565-466326503460
 
 ### Fazer Login ###
 POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {
-  "email": "Antonio@example.com",
-  "password": "secretpassword"
+  "email": "antonioribeiroamg@gmail.com",
+  "password": "123456"
 }
 
 ### Return User With Token ###

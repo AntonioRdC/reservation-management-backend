@@ -31,11 +31,15 @@ export class UsersController {
     try {
       const user = await this.usersService.create(createUserDto);
 
+      if (user.emailVerified) {
+        return { id: user.id };
+      }
+
       const token = await this.verificationTokenService.create(user);
 
       await sendConfirmationEmail(user.email, token.token);
 
-      return { user };
+      return { id: user.id, idToken: token.id };
     } catch (error) {
       console.log(error);
 

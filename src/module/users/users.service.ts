@@ -14,6 +14,16 @@ export class UsersService {
     const salt = await genSalt(10);
     const hashedPassword = await hash(createUserDto.password, salt);
 
+    const user = await this.findOneByEmail(createUserDto.email);
+
+    if (user && user.googleProvider) {
+      const updatedUser = await this.update(user.id, {
+        password: hashedPassword,
+      });
+
+      return updatedUser;
+    }
+
     const createdUser = await this.prismaService.user.create({
       data: { ...createUserDto, password: hashedPassword },
     });
@@ -21,9 +31,9 @@ export class UsersService {
     return createdUser;
   }
 
-  async createGoogle(payload: User): Promise<User> {
+  async createGoogle(createUserDto: CreateUserDto): Promise<User> {
     const createdUser = await this.prismaService.user.create({
-      data: payload,
+      data: createUserDto,
     });
 
     return createdUser;

@@ -4,12 +4,14 @@ import { compare } from 'bcrypt';
 
 import { UsersService } from 'src/module/users/users.service';
 import { User } from 'src/module/users/entity/users.entity';
+import { VerificationTokenService } from 'src/module/verification-token/verification-token.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private verificationTokenService: VerificationTokenService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<User> {
@@ -45,12 +47,15 @@ export class AuthService {
     };
   }
 
-  async validateEmailUser(qs: { token: string }) {
+  async validateEmailUser(qs: { token: string }): Promise<User> {
     const token = await this.jwtService.decode(qs.token);
     const user = await this.usersService.findOneByEmail(token.email);
+
     const updatedUser = await this.usersService.update(user.id, {
-      emailVerified: new Date(),
+      emailVerified: new Date().toISOString(),
     });
+
+    await this.verificationTokenService.remove(updatedUser.email);
 
     return updatedUser;
   }

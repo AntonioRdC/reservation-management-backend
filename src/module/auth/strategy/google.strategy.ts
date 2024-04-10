@@ -25,25 +25,42 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
     profile: Profile,
     done: VerifyCallback,
   ): Promise<any> {
-    const profileJson = profile._json;
-    const user = await this.usersService.findOneByEmail(profileJson.email);
+    try {
+      const profileJson = profile._json;
+      const user = await this.usersService.findOneByEmail(profileJson.email);
 
-    if (!user) {
-      const user = await this.usersService.createGoogle({
-        name: profileJson.name,
-        email: profileJson.email,
-        emailVerified: new Date().toISOString(),
-        image: profileJson.picture,
-        password: null,
-      });
+      if (!user) {
+        const user = await this.usersService.createGoogle({
+          name: profileJson.name,
+          email: profileJson.email,
+          emailVerified: new Date().toISOString(),
+          image: profileJson.picture,
+          password: null,
+          googleProvider: new Date().toISOString(),
+          googleProviderId: profile.id,
+        });
+
+        const token = this.authService.login(user);
+
+        return done(null, token);
+      }
+
+      if (!user.googleProvider) {
+        const updatedUser = await this.usersService.update(user.id, {
+          emailVerified: new Date().toISOString(),
+          image: profileJson.picture,
+          googleProvider: new Date().toISOString(),
+          googleProviderId: profile.id,
+        });
+
+        const token = this.authService.login(updatedUser);
+
+        return done(null, token);
+      }
 
       const token = this.authService.login(user);
 
       return done(null, token);
-    }
-
-    const token = this.authService.login(user);
-
-    return done(null, token);
+    } catch (error) {}
   }
 }

@@ -25,11 +25,11 @@ export class VerificationTokenService {
     return verificationToken;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} verificationToken`;
-  }
+  async remove(email: string): Promise<User> {
+    const deletedUser = await this.prismaService.verificationToken.delete({
+      where: { email },
+    });
 
-  remove(id: number) {
-    return `This action removes a #${id} verificationToken`;
+    return deletedUser;
   }
 }

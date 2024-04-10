@@ -9,12 +9,14 @@ import { LocalStrategy } from 'src/module/auth/strategy/local.strategy';
 import { GoogleStrategy } from 'src/module/auth/strategy/google.strategy';
 import { jwtConstants } from 'src/common/config/constants';
 import { JwtStrategy } from 'src/module/auth/strategy/jwt.strategy';
+import { VerificationTokenModule } from 'src/module/verification-token/verification-token.module';
 
 @Module({
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, GoogleStrategy, JwtStrategy],
   imports: [
     UsersModule,
+    VerificationTokenModule,
     PassportModule,
     JwtModule.register({
       secret: jwtConstants.secret,

@@ -8,4 +8,6 @@ export interface User {
   image?: string;
   password?: string;
   role?: UserRole;
+  googleProvider?: Date | string;
+  googleProviderId?: string;
 }
