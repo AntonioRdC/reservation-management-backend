@@ -1,26 +1,29 @@
-import { Strategy, Profile } from 'passport-google-oauth20';
+import { Strategy, Profile, VerifyCallback } from 'passport-google-oauth20';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 
 import { UsersService } from 'src/module/users/users.service';
+import { AuthService } from 'src/module/auth/auth.service';
 
 @Injectable()
-export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
-  constructor(private readonly usersService: UsersService) {
+export class GoogleStrategy extends PassportStrategy(Strategy) {
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly authService: AuthService,
+  ) {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: 'http://localhost:3000/auth/google/redirect',
-      passReqToCallback: true,
+      callbackURL: process.env.GOOGLE_CALLBACKURL,
       scope: ['email', 'profile'],
     });
   }
 
   async validate(
-    req: any,
     accessToken: string,
     refreshToken: string,
     profile: Profile,
+    done: VerifyCallback,
   ): Promise<any> {
     const profileJson = profile._json;
     const user = await this.usersService.findOneByEmail(profileJson.email);
@@ -34,9 +37,13 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         password: null,
       });
 
-      return user;
+      const token = this.authService.login(user);
+
+      return done(null, token);
     }
 
-    return user;
+    const token = this.authService.login(user);
+
+    return done(null, token);
   }
 }

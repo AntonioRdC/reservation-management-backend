@@ -21,6 +21,7 @@ model User {
   password      String?
   role          UserRole @default(USER)
   accounts      Account[]
+  bookings      Booking[]
 }
 
 model Account {
@@ -50,4 +51,52 @@ model PasswordResetToken {
   expires DateTime
 
   @@unique([email, token])
+}
+
+model Space {
+  id            String     @id @default(uuid())
+  name          String
+  description   String?
+  type          SpaceType
+  capacity      Int
+  hourlyRate    Float?
+  dailyRate     Float?
+  resources     Resource[]
+  bookings      Booking[]
+}
+
+enum SpaceType {
+  MEETING_ROOM
+  AUDITORIUM
+  SHARED_WORKSPACE
+  OTHER
+}
+
+model Resource {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  spaceId     String
+  space       Space    @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+
+  @@unique([name, spaceId])
+}
+
+model Booking {
+  id        String   @id @default(uuid())
+  userId    String
+  spaceId   String
+  startTime DateTime
+  endTime   DateTime
+  status    BookingStatus @default(ACTIVE)
+
+  user      User     @relation(fields: [userId], references: [id])
+  space     Space    @relation(fields: [spaceId], references: [id])
+
+  @@index([userId])
+}
+
+enum BookingStatus {
+  ACTIVE
+  CANCELLED
 }

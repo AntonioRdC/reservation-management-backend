@@ -13,12 +13,17 @@ import {
 } from '@nestjs/common';
 
 import { UsersService } from 'src/module/users/users.service';
+import { VerificationTokenService } from 'src/module/verification-token/verification-token.service';
 import { CreateUserDto } from 'src/module/users/dto/create-user.dto';
 import { UpdateUserDto } from 'src/module/users/dto/update-user.dto';
+import { sendConfirmationEmail } from 'src/common/email';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly verificationTokenService: VerificationTokenService,
+  ) {}
 
   @Post()
   @HttpCode(201)
@@ -26,8 +31,14 @@ export class UsersController {
     try {
       const user = await this.usersService.create(createUserDto);
 
-      return user;
+      const token = await this.verificationTokenService.create(user);
+
+      await sendConfirmationEmail(user.email, token.token);
+
+      return { user };
     } catch (error) {
+      console.log(error);
+
       if (error.code === 'P2002') {
         throw new BadRequestException('Email already in use');
       }

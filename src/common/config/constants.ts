@@ -1,3 +1,4 @@
-export const constants = {
-  secret: process.env.SECRET || '018dffd3-cd8f-745c-8572-76d4461cb0eb',
+export const jwtConstants = {
+  secret: process.env.JWT_SECRET || 'secret',
+  expiresIn: process.env.JWT_EXPIRES || '24h',
 };

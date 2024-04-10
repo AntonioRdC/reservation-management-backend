@@ -4,9 +4,12 @@ Content-Type: application/json
 
 {
   "name": "Antonio Ribeiro",
-  "email": "Antonio@example.com",
-  "password": "secretpassword"
+  "email": "antonioribeiroamg@gmail.com",
+  "password": "123456"
 }
+
+### Validate User ###
+GET http://localhost:3000/auth/verification-token?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFudG9uaW9yaWJlaXJvYW1nQGdtYWlsLmNvbSIsImlhdCI6MTcxMjcxMzUyNSwiZXhwIjoxNzEyNzk5OTI1fQ.QaKUD2TRGasPlIVmrShBKEgG-tPxQeyvhLYb1MmU598
 
 ### Listar todos os usuários ###
 GET http://localhost:3000/users
@@ -23,7 +26,7 @@ Content-Type: application/json
 }
 
 ### Deletar um usuário por ID ###
-DELETE http://localhost:3000/users/clunezhui0001kdqseyttsr48
+DELETE http://localhost:3000/users/14865cba-fdd5-4c43-815d-b18669b58553
 
 ### Fazer Login ###
 POST http://localhost:3000/auth/login
@@ -36,6 +39,7 @@ Content-Type: application/json
 
 ### Return User With Token ###
 GET http://localhost:3000/auth/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkNmIyMWY2ZS1lYTgyLTQwNmYtOTJjNC02MjU0Y2NhMjI3MjkiLCJuYW1lIjoiQW50b25pbyBSaWJlaXJvIiwiZW1haWwiOiJBbnRvbmlvQGV4YW1wbGUuY29tIiwiZW1haWxWZXJpZmllZCI6bnVsbCwiaW1hZ2UiOm51bGwsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzEyNTAxMjY5LCJleHAiOjE3MTI1ODc2Njl9.MwbONOAoonnE2AlPONrnwFG2z9vsAPG9EIC0K3VwuPg
 
 ### Fazer Login Google ###
 GET http://localhost:3000/auth/google/login
