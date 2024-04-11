@@ -55,16 +55,16 @@ export class AuthController {
       const updatedUser = await this.authService.validateEmailUser(qs);
 
       if (!updatedUser) {
-        throw new BadRequestException(`Token not valid`);
+        throw new BadRequestException(`Token não é valido`);
       }
 
       return updatedUser.id;
     } catch (error) {
       if (error.code === 'P2025') {
-        throw new BadRequestException(`Token not valid`);
+        throw new BadRequestException(`Token não é valido`);
       }
 
-      throw new InternalServerErrorException('Internal Error Server');
+      throw new InternalServerErrorException('Erro no servidor');
     }
   }
 }

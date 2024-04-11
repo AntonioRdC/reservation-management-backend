@@ -44,10 +44,10 @@ export class UsersController {
       console.log(error);
 
       if (error.code === 'P2002') {
-        throw new BadRequestException('Email already in use');
+        throw new BadRequestException('Email já existe');
       }
 
-      throw new InternalServerErrorException('Internal Error Server');
+      throw new InternalServerErrorException('Erro no servidor');
     }
   }
 
@@ -59,7 +59,7 @@ export class UsersController {
 
       return users;
     } catch (error) {
-      throw new InternalServerErrorException('Internal Error Server');
+      throw new InternalServerErrorException('Erro no servidor');
     }
   }
 
@@ -72,10 +72,10 @@ export class UsersController {
       return user;
     } catch (error) {
       if (error.code === 'P2025') {
-        throw new NotFoundException(`User with id '${id}' not found`);
+        throw new NotFoundException('Id não existe');
       }
 
-      throw new InternalServerErrorException('Internal Error Server');
+      throw new InternalServerErrorException('Erro no servidor');
     }
   }
 
@@ -88,10 +88,10 @@ export class UsersController {
       return user;
     } catch (error) {
       if (error.code === 'P2025') {
-        throw new NotFoundException(`User with id '${id}' not found`);
+        throw new NotFoundException('Id não existe');
       }
 
-      throw new InternalServerErrorException('Internal Error Server');
+      throw new InternalServerErrorException('Erro no servidor');
     }
   }
 
@@ -104,10 +104,10 @@ export class UsersController {
       return;
     } catch (error) {
       if (error.code === 'P2025') {
-        throw new NotFoundException(`User with id '${id}' not found`);
+        throw new NotFoundException('Id não existe');
       }
 
-      throw new InternalServerErrorException('Internal Error Server');
+      throw new InternalServerErrorException('Erro no servidor');
     }
   }
 }
