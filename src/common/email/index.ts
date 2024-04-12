@@ -10,10 +10,7 @@ const transporter = createTransport({
   },
 });
 
-export const sendConfirmationEmail = async (
-  userEmail: string,
-  token: string,
-) => {
+export async function sendConfirmationEmail(userEmail: string, token: string) {
   const url = `${process.env.API_URL}/auth/verification-token?token=${token}"`;
 
   const mailOptions = {
@@ -24,4 +21,4 @@ export const sendConfirmationEmail = async (
   };
 
   await transporter.sendMail(mailOptions);
-};
+}

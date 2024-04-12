@@ -27,7 +27,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
   ): Promise<any> {
     try {
       const profileJson = profile._json;
-      const user = await this.usersService.findOneByEmail(profileJson.email);
+      const user = await this.usersService.findUniqueByEmail(profileJson.email);
 
       if (!user) {
         const user = await this.usersService.createGoogle({

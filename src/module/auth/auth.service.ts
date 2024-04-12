@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
 
+import { VerificationTokenService } from 'src/module/verification-token/verification-token.service';
 import { UsersService } from 'src/module/users/users.service';
 import { User } from 'src/module/users/entity/users.entity';
-import { VerificationTokenService } from 'src/module/verification-token/verification-token.service';
 
 @Injectable()
 export class AuthService {
@@ -13,9 +13,24 @@ export class AuthService {
     private jwtService: JwtService,
     private verificationTokenService: VerificationTokenService,
   ) {}
+  async login(user: User) {
+    const payload = {
+      sub: user.id,
+      name: user.name,
+      email: user.email,
+      emailVerified: user.emailVerified,
+      image: user.image,
+      role: user.role,
+    };
+    const token = this.jwtService.sign(payload);
+
+    return {
+      access_token: token,
+    };
+  }
 
   async validateUser(email: string, password: string): Promise<User> {
-    const user = await this.usersService.findOneByEmail(email);
+    const user = await this.usersService.findUniqueByEmail(email);
 
     if (user) {
       const result = await compare(password, user.password);
@@ -31,31 +46,15 @@ export class AuthService {
     return null;
   }
 
-  async login(user: User) {
-    const payload = {
-      sub: user.id,
-      name: user.name,
-      email: user.email,
-      emailVerified: user.emailVerified,
-      image: user.image,
-      role: user.role,
-    };
-    const token = await this.jwtService.sign(payload);
-
-    return {
-      access_token: token,
-    };
-  }
-
-  async validateEmailUser(qs: { token: string }): Promise<User> {
+  async verificationTokenUser(qs: { token: string }): Promise<User> {
     const token = await this.jwtService.decode(qs.token);
-    const user = await this.usersService.findOneByEmail(token.email);
+    const user = await this.usersService.findUniqueByEmail(token.email);
 
     const updatedUser = await this.usersService.update(user.id, {
       emailVerified: new Date().toISOString(),
     });
 
-    await this.verificationTokenService.remove(updatedUser.email);
+    await this.verificationTokenService.removeByEmail(updatedUser.email);
 
     return updatedUser;
   }

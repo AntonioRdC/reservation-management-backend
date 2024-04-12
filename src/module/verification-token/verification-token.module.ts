@@ -6,7 +6,6 @@ import { VerificationTokenService } from 'src/module/verification-token/verifica
 import { PrismaModule } from 'src/prisma/prisma.module';
 
 @Module({
-  controllers: [],
   providers: [VerificationTokenService],
   imports: [
     PrismaModule,

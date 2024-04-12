@@ -12,10 +12,10 @@ import {
   HttpCode,
 } from '@nestjs/common';
 
-import { UsersService } from 'src/module/users/users.service';
 import { VerificationTokenService } from 'src/module/verification-token/verification-token.service';
 import { CreateUserDto } from 'src/module/users/dto/create-user.dto';
 import { UpdateUserDto } from 'src/module/users/dto/update-user.dto';
+import { UsersService } from 'src/module/users/users.service';
 import { sendConfirmationEmail } from 'src/common/email';
 
 @Controller('users')
@@ -32,17 +32,18 @@ export class UsersController {
       const user = await this.usersService.create(createUserDto);
 
       if (user.emailVerified) {
-        return { id: user.id };
+        return user;
       }
 
       const token = await this.verificationTokenService.create(user);
 
       await sendConfirmationEmail(user.email, token.token);
 
-      return { id: user.id, idToken: token.id };
+      return { ...user, idToken: token.id };
     } catch (error) {
-      console.log(error);
-
+      if (error.status) {
+        throw new BadRequestException('Email já existe');
+      }
       if (error.code === 'P2002') {
         throw new BadRequestException('Email já existe');
       }
@@ -53,9 +54,9 @@ export class UsersController {
 
   @Get()
   @HttpCode(200)
-  async findAll() {
+  async findMany() {
     try {
-      const users = await this.usersService.findAll();
+      const users = await this.usersService.findMany();
 
       return users;
     } catch (error) {
@@ -65,9 +66,9 @@ export class UsersController {
 
   @Get(':id')
   @HttpCode(200)
-  async findOne(@Param('id') id: string) {
+  async findUnique(@Param('id') id: string) {
     try {
-      const user = await this.usersService.findOneWithThrow(id);
+      const user = await this.usersService.findUniqueOrThrow(id);
 
       return user;
     } catch (error) {

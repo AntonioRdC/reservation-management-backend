@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { hash, genSalt } from 'bcrypt';
 
-import { PrismaService } from 'src/prisma/prisma.service';
-import { User } from 'src/module/users/entity/users.entity';
 import { CreateUserDto } from 'src/module/users/dto/create-user.dto';
 import { UpdateUserDto } from 'src/module/users/dto/update-user.dto';
+import { User } from 'src/module/users/entity/users.entity';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class UsersService {
@@ -14,9 +14,12 @@ export class UsersService {
     const salt = await genSalt(10);
     const hashedPassword = await hash(createUserDto.password, salt);
 
-    const user = await this.findOneByEmail(createUserDto.email);
+    const user = await this.findUniqueByEmail(createUserDto.email);
 
-    if (user && user.googleProvider) {
+    if (user) {
+      if (user.googleProvider && user.password) {
+        throw new BadRequestException('Email já existe');
+      }
       const updatedUser = await this.update(user.id, {
         password: hashedPassword,
       });
@@ -39,13 +42,13 @@ export class UsersService {
     return createdUser;
   }
 
-  async findAll(): Promise<User[]> {
+  async findMany(): Promise<User[]> {
     const allUsers = await this.prismaService.user.findMany({});
 
     return allUsers;
   }
 
-  async findOneWithThrow(id: string): Promise<User | null> {
+  async findUniqueOrThrow(id: string): Promise<User> {
     const user = await this.prismaService.user.findUniqueOrThrow({
       where: { id },
     });
@@ -53,7 +56,7 @@ export class UsersService {
     return user;
   }
 
-  async findOne(id: string): Promise<User | null> {
+  async findUnique(id: string): Promise<User | null> {
     const user = await this.prismaService.user.findUnique({
       where: { id },
     });
@@ -61,7 +64,7 @@ export class UsersService {
     return user;
   }
 
-  async findOneByEmail(email: string): Promise<User | null> {
+  async findUniqueByEmail(email: string): Promise<User | null> {
     const user = await this.prismaService.user.findUnique({
       where: { email },
     });
@@ -69,7 +72,7 @@ export class UsersService {
     return user;
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<User | null> {
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     const updatedUser = await this.prismaService.user.update({
       where: { id },
       data: updateUserDto,

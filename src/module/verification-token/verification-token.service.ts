@@ -25,7 +25,7 @@ export class VerificationTokenService {
     return verificationToken;
   }
 
-  async remove(email: string): Promise<User> {
+  async removeByEmail(email: string): Promise<User> {
     const deletedUser = await this.prismaService.verificationToken.delete({
       where: { email },
     });
